@@ -1,4 +1,4 @@
-# Your App Name
+# Rephrase AI
 
 Welcome to the README for Rephrase AI! This repository contains a JavaScript-based application with ESLint set up for linting and testing.
 
