@@ -1,6 +1,6 @@
 # Your App Name
 
-Welcome to the README for Your App Name! This repository contains a JavaScript-based application with ESLint set up for linting and testing.
+Welcome to the README for Rephrase AI! This repository contains a JavaScript-based application with ESLint set up for linting and testing.
 
 ## Prerequisites
 
@@ -11,8 +11,8 @@ Before you begin, make sure you have Node.js installed on your system. If not, y
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/your-app.git
-    cd your-app
+    git clone https://github.com/BlazikenTech/RephraseAI-backend.git
+    cd RephraseAI-backend
     ```
 
 2. **Install dependencies:**
