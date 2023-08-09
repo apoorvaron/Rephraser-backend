@@ -1,1 +1,9 @@
-/node_modules
+# Node.js
+node_modules/
+
+# Environment variables
+.env
+
+# Cache and generated files
+.cache/
+.DS_Store
