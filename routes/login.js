@@ -9,7 +9,7 @@ router.post('/login', async (req, res) => {
   try {
 
     // Check Username/Password are present or not 
-    if(username==undefined || username=="" || password==undefined || password==""){
+    if(username===undefined || username==="" || password===undefined || password===""){
         return res.status(400).json({ message: 'Missing Credentials' });
     }
 
