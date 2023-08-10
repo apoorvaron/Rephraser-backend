@@ -1,19 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt'); // Import bcrypt
 const pool = require('../config/db');
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Perform authentication using the provided username and password
-    const user = await pool.query(
-      'SELECT * FROM users WHERE username = $1 AND password = $2',
-      [username, password]
-    );
+    // Retrieve the user based on the username
+    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = result.rows[0];
 
-    if (user.rows.length === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    // Check if the user exists
+    if (!user) {
+      return res.status(400).json({ message: 'User does not exist' });
+    }
+
+    // Compare the provided password with the hashed password stored in the database
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(400).json({ message: 'Wrong Password' });
     }
 
     return res.status(200).json({ message: 'Login successful' });
