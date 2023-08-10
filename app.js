@@ -8,6 +8,8 @@ app.use(bodyParser.json()); // Use body-parser middleware
 const loginRoute = require('./routes/login');
 app.use(loginRoute);
 
+const dbHealthCheck = require('./config/healthcheck');
+app.use(dbHealthCheck);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
