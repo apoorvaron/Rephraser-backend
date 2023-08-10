@@ -7,6 +7,12 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
+
+    // Check Username/Password are present or not 
+    if(username==undefined || username=="" || password==undefined || password==""){
+        return res.status(400).json({ message: 'Missing Credentials' });
+    }
+
     // Retrieve the user based on the username
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     const user = result.rows[0];
