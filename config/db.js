@@ -1,7 +1,12 @@
-const { Pool } = require('pg');
-require('dotenv').config(); // Load environment variables from .env file
+import pkg from 'pg';
+const { Client } = pkg;
 
-const pool = new Pool({
+import * as env from "dotenv";
+env.config();
+
+
+
+const db = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
@@ -9,4 +14,6 @@ const pool = new Pool({
   database: process.env.DB_NAME
 });
 
-module.exports = pool;
+db.connect();
+
+export default db;

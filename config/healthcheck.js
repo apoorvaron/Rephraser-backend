@@ -1,5 +1,5 @@
-const app = require('./express');
-const db = require('./db');
+import app from './express.js';
+import db from './db.js';
 
 app.get('/config/healthcheck', (req, res) => {
   db.query('SELECT 1')
@@ -7,4 +7,5 @@ app.get('/config/healthcheck', (req, res) => {
     .catch(err => res.status(500).send('Database connection error'));
 }); 
 
-module.exports = app;
+
+export default app;

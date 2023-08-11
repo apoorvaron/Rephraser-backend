@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-const bodyParser = require('body-parser'); // Add body-parser
+import bodyParser from 'body-parser'; // Add body-parser
 
 app.use(bodyParser.json()); // Use body-parser middleware
 
 // Import and use the login route
-const loginRoute = require('./routes/login');
+import loginRoute from './routes/login.js';
 app.use(loginRoute);
 
-const dbHealthCheck = require('./config/healthcheck');
+import dbHealthCheck from './config/healthcheck.js';
 app.use(dbHealthCheck);
 
 const port = process.env.PORT || 3000;
