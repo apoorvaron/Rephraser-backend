@@ -8,14 +8,15 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
 ## Installation
 
-1. *Clone the Repository:*
+1. Clone the Repository:
 
     bash
     git clone https://github.com/BlazikenTech/RephraseAI-backend.git
+    
     cd RephraseAI-backend
     
 
-2. *Install Dependencies:*
+2. Install Dependencies:
 
     bash
     npm install
@@ -23,7 +24,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
 ## Usage
 
-- *Running the Application:*
+- Running the Application:
 
     To launch the app, execute the following command:
 
@@ -33,7 +34,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
     This will initiate the development server and open the app in your default web browser.
 
-- *Running Tests:*
+- Running Tests:
 
     To run tests, use this command:
 
@@ -41,7 +42,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
     npm test
     
 
-- *Linting with ESLint:*
+- Linting with ESLint:
 
     To perform code linting using ESLint, use the following command:
 
@@ -80,16 +81,38 @@ To add your own `.env` file for sensitive data, follow these steps:
 1. Create a file named `.env` in the root directory of the project.
 2. Inside the `.env` file, define your environment variables like this:
 
-    plaintext
+
     DB_USER=your_db_user
+   
     DB_PASSWORD=your_db_password
+   
     DB_HOST=localhost
+
     DB_PORT=5432
+
     DB_NAME=your_db_name
     
 
-3. Make sure to replace the placeholders with your actual database credentials.
-4. Remember not to commit your `.env` file to version control by adding it to the `.gitignore` file.
+4. Make sure to replace the placeholders with your actual database credentials.
+5. Remember not to commit your `.env` file to version control by adding it to the `.gitignore` file.
+
+## Setup Database
+
+1. Run command "npm i"
+
+2. for MAC : Run the command in terminal
+
+    psql -h ${HostName} -d ${DatabaseName} -U ${UserName}
+
+   for Windows : open SQL Shell, Write password and hit enter
+
+3. Run command in terminal
+
+       db-migrate up
+   
+5. Creation of new migration
+
+       db-migrate create ${migration_name}
 
 ## License
 
