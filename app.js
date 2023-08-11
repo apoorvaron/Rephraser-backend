@@ -1,17 +1,21 @@
-import express from 'express';
+import express from "express";
 const app = express();
-import bodyParser from 'body-parser'; // Add body-parser
+import bodyParser from'body-parser'; // Add body-parser
 
-app.use(bodyParser.json()); // Use body-parser middleware
+import routerDB from "./router/dbHealthCheck.js";
 
-// Import and use the login route
+// Use middleware
+app.use(bodyParser.json());
+app.use(express.json());
+
 import loginRoute from './routes/login.js';
 app.use(loginRoute);
 
-import dbHealthCheck from './config/healthcheck.js';
-app.use(dbHealthCheck);
+/** api routes */
+app.use("/config", routerDB);
 
 const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
