@@ -1,4 +1,7 @@
-import app from './express.js';
+import express from 'express';
+
+const app = express();
+
 import db from './db.js';
 
 app.get('/config/healthcheck', (req, res) => {
