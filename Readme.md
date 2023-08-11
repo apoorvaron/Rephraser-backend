@@ -102,7 +102,7 @@ To add your own `.env` file for sensitive data, follow these steps:
 
 2. for MAC : Run the command in terminal
 
-    psql -h ${HostName} -d ${DatabaseName} -U ${UserName}
+       psql -h ${HostName} -d ${DatabaseName} -U ${UserName}
 
    for Windows : open SQL Shell, Write password and hit enter
 
@@ -113,6 +113,17 @@ To add your own `.env` file for sensitive data, follow these steps:
 5. Creation of new migration
 
        db-migrate create ${migration_name}
+
+
+
+## Run Unit test cases
+
+1. Run command in Terminal
+
+
+       npm run test
+
+   
 
 ## License
 
