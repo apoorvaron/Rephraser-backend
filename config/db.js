@@ -1,10 +1,6 @@
-import pkg from 'pg';
-const { Client } = pkg;
-
-import * as env from "dotenv";
+const { Client } = require("pg");
+const env = require("dotenv");
 env.config();
-
-
 
 const db = new Client({
   user: process.env.DB_USER,
@@ -16,4 +12,4 @@ const db = new Client({
 
 db.connect();
 
-export default db;
+module.exports = db;

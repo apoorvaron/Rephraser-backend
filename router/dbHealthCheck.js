@@ -1,10 +1,10 @@
-import { Router } from "express";
+const { Router } = require("express");
 const routerDB = Router();
 
 /** import dbHealthCheck controller */
-import  { dbHealthCheck } from "../controllers/dbHealthcheck.js";
+const  { dbHealthCheck } = require("../controllers/dbHealthcheck.js");
 
 /** GET Methods */
 routerDB.route("/dbHealthcheck").get(dbHealthCheck); // dbHealthCheck
 
-export default routerDB;
+module.exports = routerDB;
