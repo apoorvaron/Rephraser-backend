@@ -27,8 +27,6 @@ async function register(req, res) {
 
     if (!passwordPattern.test(password)) {
         return res.status(400).json({ message: 'Password is not strong enough' });
-    }else{
-      return res.status(200).json({ message: 'Password is strong' });
     }
     
   } catch (error) {
