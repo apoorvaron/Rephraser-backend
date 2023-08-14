@@ -21,6 +21,21 @@ async function register(req, res) {
     if (userCheckResult.rows.length > 0) {
       return res.status(400).json({ message: 'Username already registered' });
     }
+
+    // Password validation (min 8 characters, 1 small, 1 capital, and 1 number)
+    const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+    if (!passwordPattern.test(password)) {
+        return res.status(400).json({ message: 'Password is not strong enough' });
+    }
+
+    // Password is Strong 
+    res.send(200);
+
+    // If password is strong 
+    // Save user details in DB
+
+
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ message: 'Internal server error' });
