@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt'; // Import bcrypt
-import db from '../config/db.js';
+const bcrypt = require('bcrypt'); // Import bcrypt
+const db = require('../config/db.js');
 
 
 /** POST: http://localhost:3000/api/login 
@@ -8,7 +8,7 @@ import db from '../config/db.js';
   "password" : "admin123"
 }
 */
-export async function login(req, res) {
+async function login(req, res) {
     try {
 
         const { username, password } = req.body;
@@ -40,4 +40,5 @@ export async function login(req, res) {
         res.status(500).json({ message: 'Internal server error' });
       }
 }
-  
+
+module.exports = { login }; 

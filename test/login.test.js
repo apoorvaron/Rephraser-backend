@@ -1,8 +1,8 @@
-import chai from 'chai';
+const chai = require('chai');
 const { expect } = chai;
 
-import supertest from 'supertest';
-import  app from '../app.js'; // Assumes your app is in the app.js file
+const supertest = require('supertest');
+const app = require('../app.js');
 
 describe('Login API', () => {
   it('should handle missing credentials', async () => {
