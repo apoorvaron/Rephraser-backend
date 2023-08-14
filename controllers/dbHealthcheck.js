@@ -1,6 +1,6 @@
-import db from '../config/db.js';
+const db = require("../config/db.js");
 
-export  async function dbHealthCheck(req, res) {
+async function dbHealthCheck(req, res) {
     console.log("Checking database health...");
     try {
         await db.query('SELECT 1');
@@ -11,3 +11,5 @@ export  async function dbHealthCheck(req, res) {
         res.status(500).send('Database connection error');
     }
 }
+
+module.exports = { dbHealthCheck }; // Export the function as an object property
