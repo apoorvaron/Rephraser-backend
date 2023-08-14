@@ -29,13 +29,20 @@ async function register(req, res) {
         return res.status(400).json({ message: 'Password is not strong enough' });
     }
 
-    // Password is Strong 
-    res.send(200);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // If password is strong 
-    // Save user details in DB
+    // Insert new user into the database
+    const insertionResult = await db.query(
+      'INSERT INTO users (username, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id',
+      [username, hashedPassword]
+    );
 
-
+    if (insertionResult.rows.length > 0) {
+      return res.status(200).json({ message: 'Registration Successful' });
+    } else {
+      return res.status(500).json({ message: 'Failed to register user' });
+    }
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ message: 'Internal server error' });
