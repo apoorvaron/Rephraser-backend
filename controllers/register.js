@@ -28,7 +28,14 @@ async function register(req, res) {
     if (!passwordPattern.test(password)) {
         return res.status(400).json({ message: 'Password is not strong enough' });
     }
-    
+
+    // Password is Strong 
+    res.send(200);
+
+    // If password is strong 
+    // Save user details in DB
+
+
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ message: 'Internal server error' });
