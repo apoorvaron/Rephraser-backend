@@ -1,21 +1,5 @@
 {
     "dev": {
-        "driver": "pg",
-        "user": {
-            "ENV": "DB_USER"
-        },
-        "password": {
-            "ENV": "DB_PASSWORD"
-        },
-        "host": {
-            "ENV": "DB_HOST"
-        },
-        "database": {
-            "ENV": "DB_Name"
-        },
-        "port": {
-            "ENV": "DB_PORT"
-        },
-        "schema": "public"
+        "ENV": "DB_URL"
     }
 }

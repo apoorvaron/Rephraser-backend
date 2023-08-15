@@ -12,15 +12,15 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
     bash
     git clone https://github.com/BlazikenTech/RephraseAI-backend.git
-    
+
     cd RephraseAI-backend
-    
+
 
 2. Install Dependencies:
 
     bash
     npm install
-    
+
 
 ## Usage
 
@@ -30,7 +30,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
     bash
     npm start
-    
+
 
     This will initiate the development server and open the app in your default web browser.
 
@@ -40,7 +40,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
     bash
     npm test
-    
+
 
 - Linting with ESLint:
 
@@ -48,7 +48,7 @@ Before you get started, ensure that you have Node.js installed on your system. I
 
     bash
     npm run lint
-    
+
 
     This will analyze your code for linting errors and warnings.
 
@@ -82,16 +82,9 @@ To add your own `.env` file for sensitive data, follow these steps:
 2. Inside the `.env` file, define your environment variables like this:
 
 
-    DB_USER=your_db_user
-   
-    DB_PASSWORD=your_db_password
-   
-    DB_HOST=localhost
+    DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName'
 
-    DB_PORT=5432
 
-    DB_NAME=your_db_name
-    
 
 4. Make sure to replace the placeholders with your actual database credentials.
 5. Remember not to commit your `.env` file to version control by adding it to the `.gitignore` file.
@@ -109,7 +102,7 @@ To add your own `.env` file for sensitive data, follow these steps:
 3. Run command in terminal
 
        db-migrate up
-   
+
 5. Creation of new migration
 
        db-migrate create ${migration_name}
@@ -123,7 +116,7 @@ To add your own `.env` file for sensitive data, follow these steps:
 
        npm run test
 
-   
+
 
 ## License
 
