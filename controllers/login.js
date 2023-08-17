@@ -4,6 +4,8 @@ const db = require('../config/db.js');
 const env = require("dotenv");
 env.config();
 
+const TOKEN_EXPIRY_TIME = '1d'; // Set token expiry time to 1 day
+
 /** POST: http://localhost:3000/api/login 
  * @param: {
   "username" : "example123",
@@ -37,7 +39,7 @@ async function login(req, res) {
         }
     
         // Create a JWT token
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: TOKEN_EXPIRY_TIME });
 
         return res.status(200).json({ message: 'Login successful', token: token });
    
