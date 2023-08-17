@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt'); // Import bcrypt
+const jwt = require('jsonwebtoken');
 const db = require('../config/db.js');
-
+const env = require("dotenv");
+env.config();
 
 /** POST: http://localhost:3000/api/login 
  * @param: {
@@ -34,11 +36,15 @@ async function login(req, res) {
           return res.status(400).json({ message: 'Wrong Password' });
         }
     
-        return res.status(200).json({ message: 'Login successful' });
+        // Create a JWT token
+        const token = jwt.sign({ userId: user.id }, process.env.DB_JWT, { expiresIn: '1h' });
+
+        return res.status(200).json({ message: 'Login successful', token: token });
+   
       } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Internal server error' });
       }
 }
 
-module.exports = { login }; 
+module.exports = { login };
