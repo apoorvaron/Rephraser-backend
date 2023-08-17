@@ -82,7 +82,8 @@ To add your own `.env` file for sensitive data, follow these steps:
 2. Inside the `.env` file, define your environment variables like this:
 
 
-    DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName'
+       DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName'
+       DB_JWT='secretKey'
 
 
 
