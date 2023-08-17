@@ -24,7 +24,7 @@ describe('Login API', () => {
   it('should handle incorrect passwords', async () => {
     const res = await supertest(app)
       .post('/api/login')
-      .send({ username: 'apoorvaron', password: 'wrongpassword' });
+      .send({ username: 'test', password: 'wrongpassword' });
     expect(res.status).to.equal(400);
     expect(res.body.message).to.equal('Wrong Password');
   });
@@ -32,7 +32,7 @@ describe('Login API', () => {
   it('should handle successful login', async () => {
     const res = await supertest(app)
       .post('/api/login')
-      .send({ username: 'apoorvaron', password: 'apoorvaron' });
+      .send({ username: 'test', password: 'Test1234' });
     expect(res.status).to.equal(200);
     expect(res.body.message).to.equal('Login successful');
   });
