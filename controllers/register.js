@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const db = require('../config/db.js');
 const { generateToken } = require('../utils/jwtUtils');
 require('dotenv').config();
 const TOKEN_EXPIRY_TIME = '1d'; // Set token expiry time to 1 day
+
 async function register(req, res) {
     try {
         const { username, password } = req.body;

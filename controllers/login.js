@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const db = require('../config/db.js');
 const { generateToken } = require('../utils/jwtUtils');
 require('dotenv').config();
+
 async function login(req, res) {
     try {
         const { username, password } = req.body;
