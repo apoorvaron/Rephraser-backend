@@ -1,5 +1,10 @@
 const bcrypt = require('bcrypt'); // Import bcrypt
+const jwt = require('jsonwebtoken');
 const db = require('../config/db.js');
+const env = require("dotenv");
+env.config();
+
+const TOKEN_EXPIRY_TIME = '1d'; // Set token expiry time to 1 day
 
 /** POST: http://localhost:3000/api/register 
  * @param: {
@@ -39,7 +44,11 @@ async function register(req, res) {
     );
 
     if (insertionResult.rows.length > 0) {
-      return res.status(200).json({ message: 'Registration Successful' });
+      // Create a JWT token
+      const userId = insertionResult.rows[0].id;
+      const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET, { expiresIn: TOKEN_EXPIRY_TIME });
+
+      return res.status(200).json({ message: 'Registration Successful', token: token });
     } else {
       return res.status(500).json({ message: 'Failed to register user' });
     }
