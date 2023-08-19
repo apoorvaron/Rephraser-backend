@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha"
+    "test": "mocha",
+    "migrate": "db-migrate up",
+    "migrate_test": "NODE_ENV=test && db-migrate up"
   },
   "keywords": [],
   "author": "",
