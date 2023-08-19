@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // Import bcrypt
 const env = require("dotenv");
 env.config();
 const { generateToken } = require('../utils/jwtUtils');
