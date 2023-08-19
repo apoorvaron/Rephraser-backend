@@ -113,7 +113,10 @@ To add your own `.env` file for sensitive data, follow these steps:
 
 ## Run Unit test cases
 
-1. Run command in Terminal
+1. Run migrations on your test DB
+    npm run migrate_test
+
+2. Run command in Terminal
 
 
        npm run test
