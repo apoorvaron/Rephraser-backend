@@ -25,7 +25,9 @@ class DBUtils {
     } catch (error) {
       throw error;
     } finally {
-      await this.disconnect();
+        console.log("before");
+        await this.disconnect();
+        console.log("after");
     }
   }
 }
