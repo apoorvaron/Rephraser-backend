@@ -2,11 +2,21 @@ const chai = require('chai');
 const { expect } = chai;
 
 const supertest = require('supertest');
-const app = require('../app.js'); // Update the path accordingly
-const db = require('../config/db.js'); // Update the path accordingly
+const app = require('../app.js'); 
+const DBUtils = require('../utils/dbUtils.js'); 
 
 describe('Registration API', () => {
+  let dbUtils;
 
+  // Before all tests, create an instance of DBUtils
+  before(() => {
+    dbUtils = new DBUtils();
+  });
+
+  // After all tests, disconnect the DBUtils
+  after(async () => {
+    await dbUtils.disconnect();
+  });
 
   it('should handle missing credentials', async () => {
     const res = await supertest(app)
@@ -21,11 +31,16 @@ describe('Registration API', () => {
       username: 'test',
       password: 'Test1234',
     };
-    await db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [existingUser.username, existingUser.password]);
+
+    const queryInsertUser = 'INSERT INTO users (username, password) VALUES ($1, $2)';
+    const valuesInsertUser = [existingUser.username, existingUser.password];
+
+    await dbUtils.run(queryInsertUser, valuesInsertUser);
 
     const res = await supertest(app)
       .post('/api/register')
       .send(existingUser);
+    
     expect(res.status).to.equal(400);
     expect(res.body.message).to.equal('Username already registered');
   });
@@ -44,27 +59,27 @@ describe('Registration API', () => {
   });
 
   it('should handle successful registration', async () => {
-
-    const existingUser = {
-      username: 'test',
-      password: 'Test1234',
+    const newUser = {
+      username: 'newuser',
+      password: 'Strong1234',
     };
-  
+
     // Check if the user exists and delete it if it does
-    const userQueryResult = await db.query('SELECT id FROM users WHERE username = $1', [existingUser.username]);
+    const queryCheckUser = 'SELECT id FROM users WHERE username = $1';
+    const valuesCheckUser = [newUser.username];
+    const userQueryResult = await dbUtils.run(queryCheckUser, valuesCheckUser);
+    
     if (userQueryResult.rows.length > 0) {
-      await db.query('DELETE FROM users WHERE username = $1', [existingUser.username]);
+      const deleteQuery = 'DELETE FROM users WHERE username = $1';
+      await dbUtils.run(deleteQuery, [newUser.username]);
     }
-  
+
     const res = await supertest(app)
       .post('/api/register')
-      .send(existingUser);
+      .send(newUser);
     
     expect(res.status).to.equal(200);
     expect(res.body.message).to.equal('Registration Successful');
-  
-    // You can also add additional assertions or checks here if needed
-  });
-  
 
+  });
 });
