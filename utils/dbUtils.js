@@ -19,15 +19,14 @@ class DBUtils {
 
   async run(query, values) {
     try {
+      this.client = new Client({connectionString});
       await this.connect();
       const result = await this.client.query(query, values);
       return result;
     } catch (error) {
       throw error;
     } finally {
-        console.log("before");
         await this.disconnect();
-        console.log("after");
     }
   }
 }
