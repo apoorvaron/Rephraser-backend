@@ -2,7 +2,7 @@ const { Client } = require("pg");
 const env = require("dotenv");
 env.config();
 
-const connectionString = process.env.DB_URL;
+const connectionString = process.env.NODE_ENV === "test" ? process.env.TEST_DB_URL : process.env.DB_URL;
 
 class DBUtils {
 
