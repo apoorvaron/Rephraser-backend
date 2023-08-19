@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt'); // Import bcrypt
 const db = require('../config/db.js');
+const { generateToken } = require('../utils/jwtUtils');
 
 /** POST: http://localhost:3000/api/register 
  * @param: {
@@ -39,7 +40,12 @@ async function register(req, res) {
     );
 
     if (insertionResult.rows.length > 0) {
-      return res.status(200).json({ message: 'Registration Successful' });
+
+        // Generate token using the utility function
+        const userId = insertionResult.rows[0].id;
+        const token = generateToken(userId);
+
+      return res.status(200).json({ message: 'Registration Successful', token: token  });
     } else {
       return res.status(500).json({ message: 'Failed to register user' });
     }
