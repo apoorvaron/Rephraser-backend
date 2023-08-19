@@ -5,11 +5,8 @@ env.config();
 const connectionString = process.env.DB_URL;
 
 class DBUtils {
-  constructor() {
-    this.client = new Client({ connectionString });
-  }
 
-  async connect() {
+    async connect() {
     await this.client.connect();
   }
 
