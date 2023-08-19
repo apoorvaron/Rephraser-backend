@@ -47,9 +47,8 @@ async function login(req, res) {
     } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({ message: 'Internal server error' });
-    } finally {
-      await dbUtils.disconnect();
-    }
+    } 
+    
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'Internal server error' });
