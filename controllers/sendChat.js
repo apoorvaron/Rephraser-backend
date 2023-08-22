@@ -1,4 +1,4 @@
-async function chat(req, res) {
+async function sendChat(req, res) {
     try {
       res.sendStatus(200);
     } catch (error) {
@@ -6,7 +6,7 @@ async function chat(req, res) {
     }
 };
   
-module.exports = { chat };
+module.exports = { sendChat };
   
   
   
