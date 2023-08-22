@@ -37,7 +37,7 @@ async function sendChat(req, res) {
     });
 
     const rephrasedText = response.choices[0].message.content;
-    res.status(200).json({ message: rephrasedText });
+    res.sendStatus(200);
 
   } catch (error) {
     console.error("Error sending chat:", error);
