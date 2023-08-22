@@ -11,7 +11,6 @@ const dummyData = [
   }
 ];
 
-
 async function sendChat(req, res) {
   try {
     res.sendStatus(200);
@@ -20,11 +19,11 @@ async function sendChat(req, res) {
   }
 };
 async function chatHistory(req, res) {
-try {
-  res.status(200).json(dummyData);
-} catch (error) {
-  res.status(500).send("Internal Server Error");
-}
+  try {
+    res.status(200).json(dummyData);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 }
 // Export the functions
 module.exports = { sendChat, chatHistory };
