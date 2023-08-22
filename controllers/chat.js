@@ -1,3 +1,7 @@
+const OpenAI = require("openai");
+const env = require("dotenv");
+env.config();
+
 const dummyData = [
   {
     "text": "This is corrected text",
@@ -11,13 +15,36 @@ const dummyData = [
   }
 ];
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 async function sendChat(req, res) {
   try {
-    res.sendStatus(200);
+    const { text } = req.body;
+
+    const response =  await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are a helpful assistant that corrects text." },
+        { role: "user", content: text },
+      ],
+      temperature: 0.7,
+      max_tokens: 100,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+
+    const rephrasedText = response.choices[0].message.content;
+    res.status(200).json({ message: rephrasedText });
+
   } catch (error) {
-    res.status(500).sendStatus("Internal Server Error");
+    console.error("Error sending chat:", error);
+    res.status(500).send("Internal Server Error");
   }
-};
+}
+
 async function chatHistory(req, res) {
   try {
     res.status(200).json(dummyData);
