@@ -5,18 +5,7 @@ const env = require("dotenv");
 env.config();
 
 const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
-const dummyData = [
-  {
-    "text": "This is corrected text",
-    "time": "10:02 PM July 3rd, 2023",
-    "sender": "bot"
-  },
-  {
-    "text": "This is user sent text",
-    "time": "10:01 PM July 3rd, 2023",
-    "sender": "user"
-  }
-];
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -48,36 +37,93 @@ async function sendChat(req, res) {
   }
 }
 
+// Function to format the time
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12 || 12;
+  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+  const monthNames = [
+    'January', 'February', 'March',
+    'April', 'May', 'June',
+    'July', 'August', 'September',
+    'October', 'November', 'December'
+  ];
+
+  const monthIndex = date.getMonth();
+  const monthName = monthNames[monthIndex];
+  
+  const day = date.getDate();
+  let daySuffix = 'th';
+
+  if (day === 1 || day === 21 || day === 31) {
+    daySuffix = 'st';
+  } else if (day === 2 || day === 22) {
+    daySuffix = 'nd';
+  } else if (day === 3 || day === 23) {
+    daySuffix = 'rd';
+  }
+
+  return `${formattedHours}:${formattedMinutes} ${ampm} ${monthName} ${day}${daySuffix}, ${date.getFullYear()}`;
+}
+
+// Getting chat History from DB according to user id
 async function chatHistory(req, res) {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ message: 'Missing token' });
-    }
-    jwt.verify(token, process.env.JWT_SECRET, async (error, decodedToken) => {
-      if (error) {
-        console.log(error);
-        return res.status(403).json({ message: 'Invalid token' });
-      }
+
+    try {
+      const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
       const userId = decodedToken.userId;
+
       // Use the dbUtils for database connection
       const dbUtils = new DBUtils();
       const query = 'SELECT * FROM corrections WHERE user_id = $1';
       const values = [userId];
+
       try {
         // Retrieve chat history based on the user ID
         const result = await dbUtils.run(query, values);
         const chatHistory = result.rows;
-        res.status(200).json({ chatHistory });
+        
+        // Transform chat history into desired response format
+        const transformedChatHistory = [];
+
+        for (const entry of chatHistory) {
+          const userMessage = {
+            text: entry.original_text, // Text from the original_text field
+            time: formatDate(entry.created_at),
+            sender: 'user',
+          };
+
+          const botMessage = {
+            text: entry.rephrased_text, // Text from the rephrased_text field
+            time: formatDate(entry.created_at),
+            sender: 'bot',
+          };
+
+          transformedChatHistory.push(userMessage);
+          transformedChatHistory.push(botMessage);
+        }
+
+        res.status(200).json(transformedChatHistory);
       } catch (error) {
         console.error('Error retrieving chat history:', error);
         res.status(500).json({ message: 'Internal server error' });
       }
-    });
+    } catch (error) {
+      console.error(error);
+      return res.status(403).json({ message: 'Invalid token' });
+    }
   } catch (error) {
     console.error('Error in chatHistory:', error);
     res.status(500).send('Internal Server Error');
   }
 }
+
 // Export the functions
 module.exports = { sendChat, chatHistory };
