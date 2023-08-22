@@ -2,7 +2,7 @@ const OpenAI = require("openai");
 const env = require("dotenv");
 env.config();
 
-const systemPrompt = "You are a helpful assistant that corrects text in English.";
+const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
 const dummyData = [
   {
     "text": "This is corrected text",
@@ -27,7 +27,7 @@ async function sendChat(req, res) {
     const response =  await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: systemPrompt },
+        { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: text },
       ],
       temperature: 0.7,
