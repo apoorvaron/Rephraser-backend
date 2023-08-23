@@ -3,7 +3,7 @@ const env = require("dotenv");
 env.config();
 
 // List of paths to skip authentication for
-const pathsToSkipAuth = ['/login', '/register', '/dbHealthcheck'];
+const pathsToSkipAuth = ['/api/login', '/api/register', '/config/dbHealthcheck'];
 
 async function authenticateToken(req, res, next) {
 
@@ -13,6 +13,7 @@ async function authenticateToken(req, res, next) {
   }
 
   const token = req.header('Authorization');
+
   // Check if token is present
   if (!token) {
     return res.status(401).json({ message: 'Token missing' });
