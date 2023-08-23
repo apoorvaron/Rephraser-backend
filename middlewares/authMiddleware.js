@@ -2,10 +2,13 @@ const jwt = require('jsonwebtoken');
 const env = require("dotenv");
 env.config();
 
+// List of paths to skip authentication for
+const pathsToSkipAuth = ['/login', '/register', '/dbHealthcheck'];
+
 async function authenticateToken(req, res, next) {
 
-  // Skip authentication for specific routes
-  if (req.path === '/login' || req.path === '/register' || req.path === '/dbHealthcheck') {
+  // Skip authentication for specific paths
+  if (pathsToSkipAuth.includes(req.path)) {
     return next();
   }
 
@@ -22,7 +25,7 @@ async function authenticateToken(req, res, next) {
 
     // Set the user ID on the request object for later use
     req.userId = decodedToken.userId;
-    
+
     // Continue to the next middleware
     next();
   } catch (error) {
