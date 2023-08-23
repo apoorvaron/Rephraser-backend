@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const router = Router();
+const authenticateToken = require('../middlewares/authMiddleware.js');
 
 /** import all controllers */
 const controllerLogin = require("../controllers/login.js");
@@ -12,6 +13,6 @@ router.route("/register").post(controllerRegister.register); // registration in 
 router.route("/chat").post(controllerChat.sendChat);
 
 /** GET Methods */
-router.route("/chat").get(controllerChat.chatHistory);
+router.route("/chat").get(authenticateToken, controllerChat.chatHistory);
 
 module.exports = router;
