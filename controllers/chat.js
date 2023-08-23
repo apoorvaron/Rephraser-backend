@@ -1,20 +1,12 @@
+const jwt = require('jsonwebtoken');
+const DBUtils = require('../utils/dbUtils.js');
 const OpenAI = require("openai");
 const env = require("dotenv");
 env.config();
+const moment = require('moment');
 
 const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
-const dummyData = [
-  {
-    "text": "This is corrected text",
-    "time": "10:02 PM July 3rd, 2023",
-    "sender": "bot"
-  },
-  {
-    "text": "This is user sent text",
-    "time": "10:01 PM July 3rd, 2023",
-    "sender": "user"
-  }
-];
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -46,12 +38,54 @@ async function sendChat(req, res) {
   }
 }
 
-async function chatHistory(req, res) {
-  try {
-    res.status(200).json(dummyData);
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
+// Function to format the time using moment.js
+function formatDate(timestamp) {
+  return moment(timestamp).format('h:mm A MMMM DDo, YYYY');
 }
+
+// Getting chat History from DB according to user id
+async function chatHistory(req, res) {
+
+    try {
+      const { userId } = req;
+
+      // Use the dbUtils for database connection
+      const dbUtils = new DBUtils();
+      const query = 'SELECT * FROM corrections WHERE user_id = $1 ORDER BY created_at DESC';
+      const values = [userId];
+
+
+        // Retrieve chat history based on the user ID
+        const result = await dbUtils.run(query, values);
+        const chatHistory = result.rows;
+        
+        // Transform chat history into desired response format
+        const transformedChatHistory = [];
+
+        for (const entry of chatHistory) {
+          const userMessage = {
+              text: entry.original_text, // Text from the original_text field
+              time: formatDate(entry.created_at),
+              sender: 'user',
+          };
+
+          const botMessage = {
+              text: entry.rephrased_text, // Text from the rephrased_text field
+              time: formatDate(entry.created_at),
+              sender: 'bot',
+          };
+
+          transformedChatHistory.push(userMessage);
+          transformedChatHistory.push(botMessage);
+        }
+
+        res.status(200).json(transformedChatHistory);
+    } catch (error) {
+      console.error('Error retrieving chat history:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
 // Export the functions
 module.exports = { sendChat, chatHistory };
