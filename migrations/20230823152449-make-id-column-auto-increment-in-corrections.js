@@ -4,6 +4,10 @@ var dbm;
 var type;
 var seed;
 
+/**
+  * We receive the dbmigrate dependency from dbmigrate initially.
+  * This enables us to not have to rely on NODE_PATH.
+  */
 exports.setup = function(options, seedLink) {
   dbm = options.dbmigrate;
   type = dbm.dataType;
@@ -11,21 +15,18 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = async function(db) {
-  await db.runSql(`
-    CREATE SEQUENCE corrections_id_seq;
-    ALTER TABLE corrections
-    ALTER COLUMN id SET DEFAULT nextval('corrections_id_seq');
-  `);
+  await db.addColumn('corrections', 'pk', {
+    type: 'bigint',
+    autoIncrement: true,
+    primaryKey: true,
+    unique: true
+  });
 };
 
 exports.down = async function(db) {
-  await db.runSql(`
-    ALTER TABLE corrections
-    ALTER COLUMN id DROP DEFAULT;
-    DROP SEQUENCE corrections_id_seq;
-  `);
+  await db.removeColumn('corrections', 'pk');
 };
 
 exports._meta = {
-  version: 1,
+  "version": 1
 };
