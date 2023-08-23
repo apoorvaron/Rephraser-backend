@@ -5,7 +5,7 @@ const bodyParser = require('body-parser'); // Add body-parser
 
 const apiRouter = require("./router/api.js");
 const configRouter = require("./router/dbHealthCheck.js");
-
+const authenticateToken = require("./middlewares/authMiddleware.js");
 
 const app = express();
 
@@ -13,6 +13,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cors());
+
+// Use the authenticateToken middleware for all routes
+app.use(authenticateToken);
 
 /** api routes */
 app.use("/api", apiRouter);
