@@ -9,8 +9,7 @@ async function authenticateToken(req, res, next) {
     return next();
   }
 
-  const token = req.header('Authorization').replace('Bearer ', '');
-
+  const token = req.header('Authorization');
   // Check if token is present
   if (!token) {
     return res.status(401).json({ message: 'Token missing' });
@@ -23,7 +22,7 @@ async function authenticateToken(req, res, next) {
 
     // Set the user ID on the request object for later use
     req.userId = decodedToken.userId;
-
+    
     // Continue to the next middleware
     next();
   } catch (error) {
