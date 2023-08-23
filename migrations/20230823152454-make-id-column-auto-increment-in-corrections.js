@@ -15,13 +15,25 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = async function(db) {
+  // Remove the existing id column
+  await db.removeColumn('corrections', 'id');
+
+  // Rename the pk column to id
   await db.renameColumn('corrections', 'pk', 'id');
 };
 
 exports.down = async function(db) {
+  // Rename the id column back to pk
   await db.renameColumn('corrections', 'id', 'pk');
+
+  // Recreate the id column with proper attributes
+  await db.addColumn('corrections', 'id', {
+    type: 'bigint',
+    primaryKey: true,
+    autoIncrement: true
+  });
 };
 
 exports._meta = {
-  "version": 1
+  version: 1,
 };
