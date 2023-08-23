@@ -20,14 +20,13 @@ describe('Chat History API', async () => {
     userId = userResponse.rows[0].id; 
 
     // Insert chat history entries into the database for the user
-    const correction_id = Math.floor((Math.random() * 100) + 1);
     await dbUtils.run(
-      'INSERT INTO corrections (id, user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, $4, $5)',
-      [correction_id, userId, 'Hello', 'Hi there', new Date().toISOString().slice(0, 19).replace('T', ' ')]
+      'INSERT INTO corrections (user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, $4)',
+      [userId, 'Hello', 'Hi there', new Date().toISOString().slice(0, 19).replace('T', ' ')]
     );
     await dbUtils.run(
-      'INSERT INTO corrections (id, user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, $4, $5)',
-      [correction_id+1, userId, 'Original_text', 'Rephrased_text', new Date().toISOString().slice(0, 19).replace('T', ' ')]
+      'INSERT INTO corrections (user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, $4)',
+      [userId, 'Original_text', 'Rephrased_text', new Date().toISOString().slice(0, 19).replace('T', ' ')]
     );
 
   });
