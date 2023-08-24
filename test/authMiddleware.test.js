@@ -3,7 +3,7 @@ const expect = chai.expect;
 const sinon = require('sinon');
 const jwt = require('jsonwebtoken');
 
-const authenticateToken = require('../Middlewares/authMiddleware');
+const authenticateToken = require('../middlewares/authMiddleware.js');
 
 describe('Authentication Middleware', () => {
   let req, res, next;
@@ -48,13 +48,14 @@ describe('Authentication Middleware', () => {
     expect(res.json.calledWith({ message: 'Token invalid or expired' })).to.be.true;
   });
 
-  it('should call next if token is valid', () => {
+  it('should call next if token is valid', async () => {
     req.path = '/api/some-protected-route';
-    req.user_id = 93;
-    req.header.returns('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjkzLCJpYXQiOjE2OTI3OTI5MjEsImV4cCI6MTY5Mjg3OTMyMX0._gNzF-LJRsOAZ_LDplTxaigsFC3WbTxv6vXeNVyd2iA');
+    req.user_id = Math.floor((Math.random() * 100) + 1);
+    req.header.returns('valid-token');
     sinon.stub(jwt, 'verify').returns({ userId: req.user_id });
 
-    authenticateToken(req, res, next);
+    await authenticateToken(req, res, next);
+    
     expect(req.userId).to.equal(req.user_id);
     expect(res.status.notCalled).to.be.true;
     expect(res.json.notCalled).to.be.true;
@@ -62,3 +63,4 @@ describe('Authentication Middleware', () => {
   });
 
 });
+
