@@ -32,7 +32,7 @@ async function sendChat(req, res) {
 
     const rephrasedTextWithQuotes = response.choices[0].message.content;
 
-    // Remove quotes if present in the rephrasedText
+    // Remove quotes if present in the rephrasedTextWithQuotes
     const rephrasedText = rephrasedTextWithQuotes.replace(/["']/g, "");
     
     
