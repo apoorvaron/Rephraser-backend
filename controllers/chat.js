@@ -90,8 +90,9 @@ async function chatHistory(req, res) {
               sender: 'bot',
           };
 
-          transformedChatHistory.push(userMessage);
           transformedChatHistory.push(botMessage);
+          transformedChatHistory.push(userMessage);
+          
         }
 
         res.status(200).json(transformedChatHistory);
