@@ -55,7 +55,7 @@ async function sendChat(req, res) {
 
 // Function to format the time using moment.js
 function formatDate(timestamp) {
-  return moment(timestamp).format('h:mm A MMMM DDo, YYYY');
+  return moment(timestamp).format('h:mm A MMMM DD, YYYY');
 }
 
 // Getting chat History from DB according to user id
