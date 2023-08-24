@@ -15,6 +15,7 @@ const openai = new OpenAI({
 async function sendChat(req, res) {
   try {
     const { text } = req.body;
+    const { userId } = req;    
 
     const response =  await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -30,6 +31,17 @@ async function sendChat(req, res) {
     });
 
     const rephrasedText = response.choices[0].message.content;
+    
+    
+    // Use the dbUtils for database connection
+    const dbUtils = new DBUtils();
+
+    // Insert the entry into the corrections table
+    const insertQuery = 'INSERT INTO corrections (user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, NOW())';
+    const insertValues = [userId, text, rephrasedText];
+
+    await dbUtils.run(insertQuery, insertValues);
+
     res.sendStatus(200);
 
   } catch (error) {
