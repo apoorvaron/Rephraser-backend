@@ -28,7 +28,7 @@ describe('sendChat API', () => {
 
     afterEach(async () => {
         if (userId) {
-        await dbUtils.run('DELETE FROM users WHERE id=' + userId); 
+            await dbUtils.run('DELETE FROM users WHERE id=' + userId); 
         }
     });
 
@@ -49,9 +49,9 @@ describe('sendChat API', () => {
         const mockResponse = {
         choices: [
             {
-            message: {
-                content: 'Rephrased text without quotes.',
-            },
+                message: {
+                    content: 'Rephrased text without quotes.',
+                },
             },
         ],
         };
