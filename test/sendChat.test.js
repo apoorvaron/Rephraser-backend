@@ -22,7 +22,6 @@ describe('sendChat API', () => {
   });
 
   beforeEach(async () => {
-    // Clear relevant data from the database or set up test data if needed
     await dbUtils.run('DELETE FROM corrections');
   });
 
@@ -42,6 +41,10 @@ describe('sendChat API', () => {
     `;
     const userInsertResult = await dbUtils.run(userInsertQuery, userInsertValues);
     userId = userInsertResult.rows[0].id;
+
+    // Get the number of rows before the test
+    const queryResultBefore = await dbUtils.run('SELECT COUNT(*) FROM corrections');
+    const numRowsBefore = parseInt(queryResultBefore.rows[0].count);
 
     const mockResponse = {
       choices: [
@@ -74,8 +77,11 @@ describe('sendChat API', () => {
     expect(openaiStub.calledOnce).to.be.true;
 
     // Assert that the database was interacted with as expected
-    const queryResult = await dbUtils.run('SELECT * FROM corrections');
-    expect(queryResult.rows).to.have.lengthOf(1); 
+    const queryResultAfter = await dbUtils.run('SELECT COUNT(*) FROM corrections');
+    const numRowsAfter = parseInt(queryResultAfter.rows[0].count);
+
+    // Check that only one additional entry is made
+    expect(numRowsAfter).to.equal(numRowsBefore + 1); 
 
   });
 });
