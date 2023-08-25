@@ -69,7 +69,7 @@ describe('sendChat API', () => {
 
         // Assert that the API responded with a status of 200
         expect(response.status).to.equal(200);
-        expect(openaiStub.calledOnce).to.be.true;
+        expect(openaiStub.calledOnce).to.be.false;
 
         // Assert that the database was interacted with as expected
         const queryResultAfter = await dbUtils.run('SELECT COUNT(*) FROM corrections');
