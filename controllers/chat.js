@@ -1,41 +1,22 @@
-const jwt = require('jsonwebtoken');
 const DBUtils = require('../utils/dbUtils.js');
 const OpenAI = require("openai");
 const env = require("dotenv");
 env.config();
 const moment = require('moment');
+const openaiUtils= require('../utils/openaiUtils.js');
 
-const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
-
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 async function sendChat(req, res) {
   try {
     const { text } = req.body;
-    const { userId } = req;    
+    const { userId } = req;
 
-    const response =  await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: text },
-      ],
-      temperature: 0.7,
-      max_tokens: 100,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-
-    const rephrasedTextWithQuotes = response.choices[0].message.content;
+    const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
 
     // Remove quotes if present in the rephrasedTextWithQuotes
     const rephrasedText = rephrasedTextWithQuotes.replace(/^["']/, "").replace(/["']$/, "");
-    
-    
+
+
     // Use the dbUtils for database connection
     const dbUtils = new DBUtils();
 
@@ -73,7 +54,7 @@ async function chatHistory(req, res) {
         // Retrieve chat history based on the user ID
         const result = await dbUtils.run(query, values);
         const chatHistory = result.rows;
-        
+
         // Transform chat history into desired response format
         const transformedChatHistory = [];
 
@@ -92,7 +73,7 @@ async function chatHistory(req, res) {
 
           transformedChatHistory.push(botMessage);
           transformedChatHistory.push(userMessage);
-          
+
         }
 
         res.status(200).json(transformedChatHistory);
