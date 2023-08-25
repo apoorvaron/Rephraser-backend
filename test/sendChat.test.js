@@ -1,58 +1,81 @@
 const chai = require('chai');
 const expect = chai.expect;
-const sinon = require('sinon');
-const { sendChat } = require('../controllers/chat.js');
-const OpenAI = require("openai"); // Import OpenAI correctly
+const supertest = require('supertest');
+const app = require('../app'); 
 const DBUtils = require('../utils/dbUtils.js');
-const env = require("dotenv");
+const OpenAI = require("openai"); 
+const jwt = require('jsonwebtoken');
+const env = require('dotenv');
+const sinon = require('sinon');
 env.config();
 
 describe('sendChat API', () => {
-    let req, res, next, createStub, dbUtilsRunStub;
+  const dbUtils = new DBUtils();
+  const username = "test@user.com";
+  const password = "Password123";
+  const passwordHash = "$2a$10$d8zx.oH7RXrDD9evAXYRaeZ1W/S0jHOjr1x8eoMG57B3S8kHr8wwi";
+  let agent;
+  let userId; 
 
-    beforeEach(() => {
-        req = {
-        body: { text: 'Is you at home?' },
-        userId: Math.floor(Math.random() * 100) + 1,
-        };
-        res = { sendStatus: sinon.spy() };
+  before(async () => {
+    agent = supertest.agent(app); 
+  });
 
-        // Stub the DBUtils.prototype.run method
-        dbUtilsRunStub = sinon.stub(DBUtils.prototype, 'run');
-    });
+  beforeEach(async () => {
+    // Clear relevant data from the database or set up test data if needed
+    await dbUtils.run('DELETE FROM corrections');
+  });
 
-    afterEach(() => {
-        sinon.restore();
-    });
 
-    it('should send rephrased text to the OpenAI API and store the result in the database', async () => {
-        // Create a mock instance of OpenAI (no need for actual API key)
-        const openai = new OpenAI({ apiKey: 'fake-api-key' });
+  afterEach(async () => {
+    if (userId) {
+      await dbUtils.run('DELETE FROM users WHERE id=' + userId); 
+    }
+  });
 
-        // Stub the openai.chat.completions.create method
-        createStub = sinon.stub(openai.chat.completions, 'create');
+  it('should send rephrased text to the OpenAI API and store the result in the database', async () => {
+    
+    // Insert a user into the users table
+    const userInsertValues = [username, passwordHash];
+    const userInsertQuery = `
+      INSERT INTO users (username, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id
+    `;
+    const userInsertResult = await dbUtils.run(userInsertQuery, userInsertValues);
+    userId = userInsertResult.rows[0].id;
 
-        // Set up the expected response from OpenAI API
-        const mockResponse = {
-        choices: [
-            {
-                message: {
-                    content: 'Rephrased text without quotes.',
-                },
-            },
-        ],
-        };
+    const mockResponse = {
+      choices: [
+        {
+          message: {
+            content: 'Rephrased text without quotes.',
+          },
+        },
+      ],
+    };
 
-        // Configure the stub to resolve with the mockResponse
-        createStub(mockResponse);
+    // Create a mock instance of OpenAI (no need for actual API key)
+    const openai = new OpenAI({ apiKey: 'fake-api-key' });
 
-        // Call the sendChat function
-        await sendChat(req, res);
+    // Mock the OpenAI API response
+    const openaiStub = sinon.stub(openai.chat.completions, 'create');
+    openaiStub(mockResponse);
 
-        // Assert that the OpenAI API was called once
-        expect(createStub.calledOnce).to.be.true;
+    // Stub jwt.verify to return a specific object with the user_id we inserted
+    sinon.stub(jwt, 'verify').returns({ userId: userId });
 
-        // Assert that the DBUtils.prototype.run method was called once
-        expect(dbUtilsRunStub.calledOnce).to.be.true;
-    });
+    const token = 'your-mock-token'; 
+    const response = await agent
+      .post('/api/chat')
+      .set('Authorization', token) 
+      .send({ text: 'Is you at home?' });
+
+    // Assert that the API responded with a status of 200
+    expect(response.status).to.equal(200);
+    expect(openaiStub.calledOnce).to.be.true;
+
+    // Assert that the database was interacted with as expected
+    const queryResult = await dbUtils.run('SELECT * FROM corrections');
+    expect(queryResult.rows).to.have.lengthOf(1); 
+
+  });
 });
