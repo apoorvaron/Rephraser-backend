@@ -21,11 +21,6 @@ describe('sendChat API', () => {
         agent = supertest.agent(app); 
     });
 
-    beforeEach(async () => {
-        await dbUtils.run('DELETE FROM corrections');
-    });
-
-
     afterEach(async () => {
         if (userId) {
             await dbUtils.run('DELETE FROM users WHERE id=' + userId); 
