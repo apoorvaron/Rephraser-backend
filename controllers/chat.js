@@ -4,6 +4,7 @@ const OpenAI = require("openai");
 const env = require("dotenv");
 env.config();
 const moment = require('moment');
+const { getRephrasedText } = require('../utils/openaiUtils.js');
 
 const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
 
@@ -17,20 +18,7 @@ async function sendChat(req, res) {
     const { text } = req.body;
     const { userId } = req;    
 
-    const response =  await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: text },
-      ],
-      temperature: 0.7,
-      max_tokens: 100,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-
-    const rephrasedTextWithQuotes = response.choices[0].message.content;
+    const rephrasedTextWithQuotes = await getRephrasedText(text);
 
     // Remove quotes if present in the rephrasedTextWithQuotes
     const rephrasedText = rephrasedTextWithQuotes.replace(/^["']/, "").replace(/["']$/, "");
