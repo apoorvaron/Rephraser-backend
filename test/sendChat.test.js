@@ -56,7 +56,7 @@ describe('sendChat API', () => {
 
         // Mock the OpenAI API response
         const openaiStub = sinon.stub(openai.chat.completions, 'create');
-        openaiStub(mockResponse);
+        openaiStub.resolves(mockResponse);
 
         // Stub jwt.verify to return a specific object with the user_id we inserted
         sinon.stub(jwt, 'verify').returns({ userId: userId });
