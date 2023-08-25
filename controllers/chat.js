@@ -1,29 +1,22 @@
-const jwt = require('jsonwebtoken');
 const DBUtils = require('../utils/dbUtils.js');
 const OpenAI = require("openai");
 const env = require("dotenv");
 env.config();
 const moment = require('moment');
-const { getRephrasedText } = require('../utils/openaiUtils.js');
+const openaiUtils= require('../utils/openaiUtils.js');
 
-const SYSTEM_PROMPT = "You are a helpful assistant that corrects text in English.";
-
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 async function sendChat(req, res) {
   try {
     const { text } = req.body;
-    const { userId } = req;    
+    const { userId } = req;
 
-    const rephrasedTextWithQuotes = await getRephrasedText(text);
+    const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
 
     // Remove quotes if present in the rephrasedTextWithQuotes
     const rephrasedText = rephrasedTextWithQuotes.replace(/^["']/, "").replace(/["']$/, "");
-    
-    
+
+
     // Use the dbUtils for database connection
     const dbUtils = new DBUtils();
 
@@ -61,7 +54,7 @@ async function chatHistory(req, res) {
         // Retrieve chat history based on the user ID
         const result = await dbUtils.run(query, values);
         const chatHistory = result.rows;
-        
+
         // Transform chat history into desired response format
         const transformedChatHistory = [];
 
@@ -80,7 +73,7 @@ async function chatHistory(req, res) {
 
           transformedChatHistory.push(botMessage);
           transformedChatHistory.push(userMessage);
-          
+
         }
 
         res.status(200).json(transformedChatHistory);

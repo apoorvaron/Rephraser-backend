@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const supertest = require('supertest');
-const app = require('../app'); 
+const app = require('../app');
 const DBUtils = require('../utils/dbUtils.js');
 const jwt = require('jsonwebtoken');
 const env = require('dotenv');
@@ -18,12 +18,12 @@ describe('sendChat API', () => {
     let userId;
 
     before(async () => {
-        agent = supertest.agent(app); 
+        agent = supertest.agent(app);
     });
 
     afterEach(async () => {
         if (userId) {
-            await dbUtils.run('DELETE FROM users WHERE id=' + userId); 
+            await dbUtils.run('DELETE FROM users WHERE id=' + userId);
         }
     });
 
@@ -40,27 +40,16 @@ describe('sendChat API', () => {
         const queryResultBefore = await dbUtils.run('SELECT COUNT(*) FROM corrections');
         const numRowsBefore = parseInt(queryResultBefore.rows[0].count);
 
-        const mockResponse = {
-            choices: [
-                {
-                    message: {
-                        content: 'Rephrased text without quotes.',
-                    },
-                },
-            ],
-        };
-
         // Stub the getRephrasedText function to return a mock response
-        const getRephrasedTextStub = sinon.stub(openaiUtils, 'getRephrasedText');
-        getRephrasedTextStub(mockResponse.choices[0].message.content);
+        const getRephrasedTextStub = sinon.stub(openaiUtils, 'getRephrasedText').returns('Rephrased text without quotes.');
 
         // Stub jwt.verify to return a specific object with the user_id we inserted
         sinon.stub(jwt, 'verify').returns({ userId: userId });
 
-        const token = 'your-mock-token'; 
+        const token = 'your-mock-token';
         const response = await agent
             .post('/api/chat')
-            .set('Authorization', token) 
+            .set('Authorization', token)
             .send({ text: 'Is you at home?' });
 
         // Assert that the API responded with a status of 200
@@ -72,7 +61,7 @@ describe('sendChat API', () => {
         const numRowsAfter = parseInt(queryResultAfter.rows[0].count);
 
         // Check that only one additional entry is made
-        expect(numRowsAfter).to.equal(numRowsBefore + 1); 
+        expect(numRowsAfter).to.equal(numRowsBefore + 1);
 
         // Restore stubs
         getRephrasedTextStub.restore();
