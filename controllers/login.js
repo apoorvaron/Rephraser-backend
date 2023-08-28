@@ -24,34 +24,28 @@ async function login(req, res) {
     const query = 'SELECT * FROM users WHERE username = $1';
     const values = [username];
 
-    try {
-      // Retrieve the user based on the username
-      const result = await dbUtils.run(query, values);
-      const user = result.rows[0];
-      
-      // Check if the user exists
-      if (!user) {
-        return res.status(400).json({ message: 'User does not exist' });
-      }
-      
-      // Compare the provided password with the hashed password stored in the database
-      const passwordMatch = await bcrypt.compare(password, user.password);
 
-      if (!passwordMatch) {
-        return res.status(400).json({ message: 'Wrong Password' });
-      }
-      
-      // Create a JWT token
-      const token = generateToken(user.id);
-      return res.status(200).json({ message: 'Login successful', token: token });
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    } 
-    
+    // Retrieve the user based on the username
+    const result = await dbUtils.run(query, values);
+    const user = result.rows[0];
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(400).json({ message: 'User does not exist' });
+    }
+
+    // Compare the provided password with the hashed password stored in the database
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(400).json({ message: 'Wrong Password' });
+    }
+
+    // Create a JWT token
+    const token = generateToken(user.id);
+    return res.status(200).json({ message: 'Login successful', token: token });
   } catch (error) {
-    console.error('Error during login:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    throw(error);
   }
 }
 
