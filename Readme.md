@@ -85,6 +85,8 @@ To add your own `.env` file for sensitive data, follow these steps:
        DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName'
        TEST_DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourTESTDatabaseName'
        JWT_SECRET='secretKey'
+       OPENAI_API_KEY = '<Your_OPEN_API_KEY>'
+       ROLLBAR_TOKEN = '<Your_ROLLBAR_TOKEN>'
 
 
 
