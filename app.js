@@ -9,8 +9,10 @@ const authenticateToken = require("./middlewares/authMiddleware.js");
 
 // include and initialize the rollbar library with your access token
 const Rollbar = require('rollbar');
+const ROLLBAR_TOKEN = process.env.ROLLBAR_TOKEN;
+
 const rollbar = new Rollbar({
-  accessToken: 'd67eec4e558b43798dc67dd68f3ccdab',
+  accessToken: ROLLBAR_TOKEN,
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
