@@ -6,6 +6,7 @@ const bodyParser = require('body-parser'); // Add body-parser
 const apiRouter = require("./router/api.js");
 const configRouter = require("./router/dbHealthCheck.js");
 const authenticateToken = require("./middlewares/authMiddleware.js");
+const errorMiddleware = require("./middlewares/errorMiddleware.js");
 
 // include and initialize the rollbar library with your access token
 const Rollbar = require('rollbar');
@@ -32,6 +33,8 @@ app.use("/api", apiRouter);
 app.use("/config", configRouter);
 
 app.use(rollbar.errorHandler());
+// Add the error middleware
+app.use(errorMiddleware);
 
 const port = process.env.PORT || 3000;
 
