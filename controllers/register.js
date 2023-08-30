@@ -50,7 +50,7 @@ async function register(req, res) {
     const userId = insertionResult.rows[0].id;
     const token = generateToken(userId, username);
 
-    return res.status(200).json({ message: 'Registration Successful', token: token });
+    return res.status(200).json({ message: 'Registration Successful', username: username, token: token });
   } else {
     return res.status(500).json({ message: 'Failed to register user' });
   }

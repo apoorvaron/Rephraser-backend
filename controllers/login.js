@@ -42,7 +42,7 @@ async function login(req, res) {
 
   // Create a JWT token
   const token = generateToken(user.id, username);
-  return res.status(200).json({ message: 'Login successful', token: token });
+  return res.status(200).json({ message: 'Login successful', username: username, token: token });
 }
 
 module.exports = { login };
