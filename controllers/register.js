@@ -48,7 +48,7 @@ async function register(req, res) {
   if (insertionResult.rows.length > 0) {
     // Generate token using the utility function
     const userId = insertionResult.rows[0].id;
-    const token = generateToken(userId);
+    const token = generateToken(userId, username);
 
     return res.status(200).json({ message: 'Registration Successful', token: token });
   } else {
