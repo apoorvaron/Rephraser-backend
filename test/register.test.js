@@ -69,5 +69,6 @@ describe('Registration API', () => {
     expect(res.status).to.equal(200);
     expect(res.body.message).to.equal('Registration Successful');
     expect(res.body.token).to.be.a('string');
+    expect(res.body.username).to.be.a('string');
   });
 });
