@@ -27,8 +27,8 @@ async function authenticateToken(req, res, next) {
     // Set the user ID on the request object for later use
     req.userId = decodedToken.userId;
 
-    // Set the username on the request object for later use
-    req.username = decodedToken.username;
+    // Set the email on the request object for later use
+    req.email = decodedToken.email;
     
     // Continue to the next middleware
     next();

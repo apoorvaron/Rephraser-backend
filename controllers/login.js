@@ -7,24 +7,24 @@ const DBUtils = require('../utils/dbUtils.js');
 
 /** POST: http://localhost:3000/api/login 
  * @param: {
-  "username" : "example123",
+  "email" : "example@gmail.com",
   "password" : "admin123"
 }
 */
 async function login(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  // Check Username/Password are present or not
-  if (username === undefined || username === "" || password === undefined || password === "") {
+  // Check email/Password are present or not
+  if (email === undefined || email === "" || password === undefined || password === "") {
     return res.status(400).json({ message: 'Missing Credentials' });
   }
 
   const dbUtils = new DBUtils();
-  const query = 'SELECT * FROM users WHERE username = $1';
-  const values = [username];
+  const query = 'SELECT * FROM users WHERE email = $1';
+  const values = [email];
 
 
-  // Retrieve the user based on the username
+  // Retrieve the user based on the email
   const result = await dbUtils.run(query, values);
   const user = result.rows[0];
 
@@ -41,8 +41,8 @@ async function login(req, res) {
   }
 
   // Create a JWT token
-  const token = generateToken(user.id, username);
-  return res.status(200).json({ message: 'Login successful', username: username, token: token });
+  const token = generateToken(user.id, email);
+  return res.status(200).json({ message: 'Login successful', email: email, token: token });
 }
 
 module.exports = { login };
