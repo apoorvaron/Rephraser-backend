@@ -11,7 +11,7 @@ env.config();
 
 describe('sendChat API', () => {
     const dbUtils = new DBUtils();
-    const username = "test@user.com";
+    const email = "test@user.com";
     const password = "Password123";
     const passwordHash = "$2a$10$d8zx.oH7RXrDD9evAXYRaeZ1W/S0jHOjr1x8eoMG57B3S8kHr8wwi";
     let agent;
@@ -29,9 +29,9 @@ describe('sendChat API', () => {
 
     it('should send rephrased text to the OpenAI API and store the result in the database', async () => {
         // Insert a user into the users table
-        const userInsertValues = [username, passwordHash];
+        const userInsertValues = [email, passwordHash];
         const userInsertQuery = `
-            INSERT INTO users (username, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id
+            INSERT INTO users (email, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id
         `;
         const userInsertResult = await dbUtils.run(userInsertQuery, userInsertValues);
         userId = userInsertResult.rows[0].id;
