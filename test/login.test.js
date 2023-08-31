@@ -53,5 +53,6 @@ describe('Login API', async () => {
     expect(res.status).to.equal(200);
     expect(res.body.message).to.equal('Login successful');
     expect(res.body.token).to.be.a('string'); // Check if a token is returned and it's a string
+    expect(res.body.username).to.be.a('string');
   });
 });
