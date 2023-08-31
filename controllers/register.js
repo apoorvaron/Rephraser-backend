@@ -50,7 +50,10 @@ async function register(req, res) {
     const userId = insertionResult.rows[0].id;
     const token = generateToken(userId, email);
 
-    return res.status(200).json({ message: 'Registration Successful', email: email, token: token });
+    // Trim the username from the email address
+    const username = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+
+    return res.status(200).json({ message: 'Registration Successful', username: username, token: token });
   } else {
     return res.status(500).json({ message: 'Failed to register user' });
   }
