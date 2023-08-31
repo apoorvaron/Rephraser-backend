@@ -7,18 +7,18 @@ const DBUtils = require('../utils/dbUtils.js');
 
 describe('Registration API', () => {
   const dbUtils = new DBUtils();
-  const existingUsername = "test@user.com";
-  const newUsername = "new@user.com";
+  const existingEmail = "test@user.com";
+  const newEmail = "new@user.com";
 
   before(async () => {
     await dbUtils.run(
-      'INSERT INTO users (username, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id',
-      [existingUsername, "tempPassword123"]
+      'INSERT INTO users (email, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id',
+      [existingEmail, "tempPassword123"]
     );
   });
 
   after(async () => {
-    await dbUtils.run('DELETE FROM users WHERE username in ($1, $2)', [existingUsername, newUsername]);
+    await dbUtils.run('DELETE FROM users WHERE email in ($1, $2)', [existingEmail, newEmail]);
   });
 
   it('should handle missing credentials', async () => {
@@ -29,9 +29,9 @@ describe('Registration API', () => {
     expect(res.body.message).to.equal('Missing Credentials');
   });
 
-  it('should handle already registered usernames', async () => {
+  it('should handle already registered emails', async () => {
     const existingUser = {
-      username: existingUsername,
+      email: existingEmail,
       password: 'Test1234',
     };
 
@@ -40,12 +40,12 @@ describe('Registration API', () => {
       .send(existingUser);
 
     expect(res.status).to.equal(400);
-    expect(res.body.message).to.equal('Username already registered');
+    expect(res.body.message).to.equal('Email already registered');
   });
 
   it('should handle weak passwords', async () => {
     const weakPasswordUser = {
-      username: 'weakuser',
+      email: 'weakuser',
       password: 'weak', // Weak password
     };
 
@@ -58,7 +58,7 @@ describe('Registration API', () => {
 
   it('should handle successful registration', async () => {
     const newUser = {
-      username: newUsername,
+      email: newEmail,
       password: 'Strong1234',
     };
 

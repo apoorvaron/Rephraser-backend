@@ -14,7 +14,7 @@ describe('Chat History API', async () => {
   before(async () => {
     // Insert user into the database and get the generated user_id
     const userResponse = await dbUtils.run(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id',
       ['testuser', 'testpassword']
     );
     userId = userResponse.rows[0].id; 
