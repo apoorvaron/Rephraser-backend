@@ -6,27 +6,27 @@ env.config();
 
 /** POST: http://localhost:3000/api/register 
  * @param: {
- *   "username" : "example123",
+ *   "email" : "example123",
  *   "password" : "Admin123"
  }
  */
 async function register(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   // Check if any input is missing
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ message: 'Missing Credentials' });
   }
 
   const dbUtils = new DBUtils(); // Create a new instance of DBUtils for each request
 
-  const queryCheckUser = 'SELECT * FROM users WHERE username = $1';
-  const valuesCheckUser = [username];
+  const queryCheckUser = 'SELECT * FROM users WHERE email = $1';
+  const valuesCheckUser = [email];
 
-  // Check if username is already registered
+  // Check if email is already registered
   const userCheckResult = await dbUtils.run(queryCheckUser, valuesCheckUser);
   if (userCheckResult.rows.length > 0) {
-    return res.status(400).json({ message: 'Username already registered' });
+    return res.status(400).json({ message: 'Email already registered' });
   }
 
   // Password validation (min 8 characters, 1 small, 1 capital, and 1 number)
@@ -41,16 +41,16 @@ async function register(req, res) {
 
   // Insert new user into the database
   const insertionResult = await dbUtils.run(
-    'INSERT INTO users (username, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id',
-    [username, hashedPassword]
+    'INSERT INTO users (email, password, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id',
+    [email, hashedPassword]
   );
 
   if (insertionResult.rows.length > 0) {
     // Generate token using the utility function
     const userId = insertionResult.rows[0].id;
-    const token = generateToken(userId, username);
+    const token = generateToken(userId, email);
 
-    return res.status(200).json({ message: 'Registration Successful', username: username, token: token });
+    return res.status(200).json({ message: 'Registration Successful', email: email, token: token });
   } else {
     return res.status(500).json({ message: 'Failed to register user' });
   }
