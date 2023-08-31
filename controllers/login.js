@@ -39,10 +39,13 @@ async function login(req, res) {
   if (!passwordMatch) {
     return res.status(400).json({ message: 'Wrong Password' });
   }
+  
+  // Trim the username from the email address
+  const username = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
 
   // Create a JWT token
   const token = generateToken(user.id, email);
-  return res.status(200).json({ message: 'Login successful', email: email, token: token });
+  return res.status(200).json({ message: 'Login successful', username: username, token: token });
 }
 
 module.exports = { login };
