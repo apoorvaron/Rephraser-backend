@@ -4,7 +4,9 @@ const DBUtils = require('../utils/dbUtils.js');
 const bcrypt = require('bcrypt');
 const env = require('dotenv');
 env.config();
+
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 // Function to generate a random 10-character string
 function generateRandomString(length) {
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -15,33 +17,44 @@ function generateRandomString(length) {
   }
   return randomString;
 }
+
 async function googleLogin(req, res) {
-  const { id_token } = req.body;
+  const {id_token}  = req.body;
+
   try {
     const ticket = await client.verifyIdToken({
       idToken: id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
+
     const payload = ticket.getPayload();
     const email = payload.email;
     const dbUtils = new DBUtils();
+
     // Check if the user exists
     const userResult = await dbUtils.run('SELECT id, password FROM users WHERE email = $1', [email]);
+
     let userId;
     let hashedPassword;
+
     if (userResult.rows.length === 0) {
       // User doesn't exist, create a new user
-      const randomPassword = generateRandomString(10);
-      hashedPassword = await bcrypt.hash(randomPassword, 10);
+      const randomPassword = generateRandomString(10); 
+      hashedPassword = await bcrypt.hash(randomPassword, 10); 
+      
       const insertResult = await dbUtils.run('INSERT INTO users (email, password, created_at, updated_at) VALUES ($1,$2, NOW(), NOW()) RETURNING id',[email, hashedPassword]);
+
       userId = insertResult.rows[0].id;
     } else {
       userId = userResult.rows[0].id;
       hashedPassword = userResult.rows[0].password;
     }
+
     const token = generateToken(userId, email);
+    
     // Trim the username from the email address
     const username = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+
     return res.status(200).json({ message: 'Login successful', username: username, token: token });
   } catch (error) {
     console.error('Login error:', error);
