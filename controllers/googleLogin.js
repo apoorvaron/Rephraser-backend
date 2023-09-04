@@ -1,6 +1,7 @@
 const { OAuth2Client } = require('google-auth-library');
 const { generateToken } = require('../utils/jwtUtils');
 const DBUtils = require('../utils/dbUtils.js');
+const { generateUsername } = require('../utils/usernameUtils.js');
 const bcrypt = require('bcrypt');
 const env = require('dotenv');
 env.config();
@@ -32,10 +33,10 @@ async function googleLogin(req, res) {
     const dbUtils = new DBUtils();
 
     // Check if the user exists
-    const userResult = await dbUtils.run('SELECT id, password FROM users WHERE email = $1', [email]);
+    const userResult = await dbUtils.run('SELECT id FROM users WHERE email = $1', [email]);
 
     let userId;
-    let hashedPassword;
+    let hashedPassword
 
     if (userResult.rows.length === 0) {
       // User doesn't exist, create a new user
@@ -47,14 +48,13 @@ async function googleLogin(req, res) {
       userId = insertResult.rows[0].id;
     } else {
       userId = userResult.rows[0].id;
-      hashedPassword = userResult.rows[0].password;
     }
 
     const token = generateToken(userId, email);
-    
-    // Trim the username from the email address
-    const username = email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
 
+    // Trim the username from the email address
+    const username = generateUsername(email);
+    
     return res.status(200).json({ message: 'Login successful', username: username, token: token });
   } catch (error) {
     console.error('Login error:', error);
