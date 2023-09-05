@@ -25,7 +25,7 @@ async function googleLogin(req, res) {
   try {
     const ticket = await client.verifyIdToken({
       idToken: id_token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      requiredAudience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
