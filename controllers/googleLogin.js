@@ -2,7 +2,7 @@ const { OAuth2Client } = require('google-auth-library');
 const { generateToken } = require('../utils/jwtUtils');
 const DBUtils = require('../utils/dbUtils.js');
 const { generateUsername } = require('../utils/usernameUtils.js');
-const bcrypt = require('bcrypt');
+const { generateHashPassword } = require('../utils/hashPasswordUtils.js');
 const env = require('dotenv');
 env.config();
 
@@ -41,7 +41,7 @@ async function googleLogin(req, res) {
     if (userResult.rows.length === 0) {
       // User doesn't exist, create a new user
       const randomPassword = generateRandomString(10); 
-      hashedPassword = await bcrypt.hash(randomPassword, 10); 
+      hashedPassword = await generateHashPassword(randomPassword);
       
       const insertResult = await dbUtils.run('INSERT INTO users (email, password, created_at, updated_at) VALUES ($1,$2, NOW(), NOW()) RETURNING id',[email, hashedPassword]);
 
