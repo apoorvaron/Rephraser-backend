@@ -87,6 +87,7 @@ To add your own `.env` file for sensitive data, follow these steps:
        JWT_SECRET='secretKey'
        OPENAI_API_KEY = '<Your_OPEN_API_KEY>'
        ROLLBAR_TOKEN = '<Your_ROLLBAR_TOKEN>'
+       GOOGLE_CLIENT_ID = '<Your_GOOGLE_CLIENT_ID>'
 
 
 

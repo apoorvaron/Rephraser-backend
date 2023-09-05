@@ -3,7 +3,7 @@ const env = require("dotenv");
 env.config();
 
 // List of paths to skip authentication for
-const pathsToSkipAuth = ['/api/login', '/api/register', '/config/dbHealthcheck'];
+const pathsToSkipAuth = ['/api/login', '/api/register', '/config/dbHealthcheck', '/api/google_login'];
 
 async function authenticateToken(req, res, next) {
 
