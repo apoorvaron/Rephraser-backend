@@ -4,15 +4,9 @@ const env = require("dotenv");
 env.config();
 const moment = require('moment');
 const openaiUtils= require('../utils/openaiUtils.js');
-const {countTransactionsQuery}= require('../utils/chatUtils.js');
+const {getCorrectsCountForToday}= require('../utils/chatUtils.js');
 
 const DAILY_TRANSACTION_LIMIT = 10; 
-
-// Calculate the start and end timestamps for the current day 
-const today = new Date();
-const startOfDayTimestamp = today.toISOString().slice(0, 10) + ' 00:00:00';
-const endOfDayTimestamp = today.toISOString().slice(0, 10) + ' 23:59:59';
-
 
 async function sendChat(req, res) {
   const { text } = req.body;
@@ -22,11 +16,7 @@ async function sendChat(req, res) {
   const dbUtils = new DBUtils();
 
   // Check if the user has reached the daily limit
-  const checkLimitQuery = countTransactionsQuery();
-  const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
-
-  const result = await dbUtils.run(checkLimitQuery, checkLimitValues);
-  const translationCount = result.rows[0].translation_count;
+  const translationCount = await getCorrectsCountForToday(userId);
 
   if (translationCount >= DAILY_TRANSACTION_LIMIT) {
     return res.status(400).json({Transactions:translationCount, message: `You have exhausted your daily limit of ${DAILY_TRANSACTION_LIMIT} free translations` });
@@ -86,13 +76,8 @@ async function chatHistory(req, res) {
     transformedChatHistory.push(userMessage);
 
   }
-
-  // Count Corrections per user
-  const checkLimitQuery = countTransactionsQuery();
-  const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
-
-  const countCorrections = await dbUtils.run(checkLimitQuery, checkLimitValues);
-  const translationCount = countCorrections.rows[0].translation_count
+  // Check if the user has reached the daily limit
+  const translationCount = await getCorrectsCountForToday(userId);
 
   res.status(200).json({Transactions:translationCount,History:transformedChatHistory});
 
