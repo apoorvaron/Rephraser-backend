@@ -32,8 +32,8 @@ async function sendChat(req, res) {
   const insertValues = [userId, text, rephrasedText];
 
   await dbUtils.run(insertQuery, insertValues);
-
-  res.status(200).json({Transactions:translationCount});
+  const incrementedTranslation = (Number(translationCount)+1).toString();
+  res.status(200).json({Transactions:incrementedTranslation});
 
 }
 
