@@ -28,7 +28,7 @@ async function sendChat(req, res) {
   const translationCount = result.rows[0].translation_count;
 
   if (translationCount >= DAILY_TRANSACTION_LIMIT) {
-    return res.status(400).json({Transactions:translationCount, error: 'You have exhausted your daily limit of 10 free translations' });
+    return res.status(400).json({Transactions:translationCount, error: `You have exhausted your daily limit of ${DAILY_TRANSACTION_LIMIT} free translations` });
   }
 
   const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
