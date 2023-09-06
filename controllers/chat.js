@@ -4,14 +4,9 @@ const env = require("dotenv");
 env.config();
 const moment = require('moment');
 const openaiUtils= require('../utils/openaiUtils.js');
+const {getCorrectsCountForToday}= require('../utils/chatUtils.js');
 
 const DAILY_TRANSACTION_LIMIT = 10; 
-
-// Calculate the start and end timestamps for the current day 
-const today = new Date();
-const startOfDayTimestamp = today.toISOString().slice(0, 10) + ' 00:00:00';
-const endOfDayTimestamp = today.toISOString().slice(0, 10) + ' 23:59:59';
-
 
 async function sendChat(req, res) {
   const { text } = req.body;
@@ -21,14 +16,10 @@ async function sendChat(req, res) {
   const dbUtils = new DBUtils();
 
   // Check if the user has reached the daily limit
-  const checkLimitQuery = `SELECT COUNT(*) AS translation_count FROM corrections WHERE user_id = $1 AND created_at >= $2::timestamp AND created_at <= $3::timestamp; `;
-  const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
-
-  const result = await dbUtils.run(checkLimitQuery, checkLimitValues);
-  const translationCount = result.rows[0].translation_count;
+  const translationCount = await getCorrectsCountForToday(userId);
 
   if (translationCount >= DAILY_TRANSACTION_LIMIT) {
-    return res.status(400).json({Transactions:translationCount, error: 'You have exhausted your daily limit of 10 free translations' });
+    return res.status(400).json({Transactions:translationCount, message: `You have exhausted your daily limit of ${DAILY_TRANSACTION_LIMIT} free translations` });
   }
 
   const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
@@ -41,8 +32,8 @@ async function sendChat(req, res) {
   const insertValues = [userId, text, rephrasedText];
 
   await dbUtils.run(insertQuery, insertValues);
-
-  res.status(200).json({Transactions:translationCount});
+  const incrementedTranslation = (Number(translationCount)+1).toString();
+  res.status(200).json({Transactions:incrementedTranslation});
 
 }
 
@@ -61,11 +52,11 @@ async function chatHistory(req, res) {
   const values = [userId];
 
 
-      // Retrieve chat history based on the user ID
+  // Retrieve chat history based on the user ID
   const result = await dbUtils.run(query, values);
   const chatHistory = result.rows;
 
-          // Transform chat history into desired response format
+  // Transform chat history into desired response format
   const transformedChatHistory = [];
 
   for (const entry of chatHistory) {
@@ -85,9 +76,10 @@ async function chatHistory(req, res) {
     transformedChatHistory.push(userMessage);
 
   }
+  // Check if the user has reached the daily limit
+  const translationCount = await getCorrectsCountForToday(userId);
 
-  res.status(200).json(transformedChatHistory);
-
+  res.status(200).json({Transactions:translationCount,History:transformedChatHistory});
 
 }
 
