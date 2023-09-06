@@ -5,20 +5,36 @@ env.config();
 const moment = require('moment');
 const openaiUtils= require('../utils/openaiUtils.js');
 
+const DAILY_TRANSACTION_LIMIT = 10; 
+
+// Calculate the start and end timestamps for the current day 
+const today = new Date();
+const startOfDayTimestamp = today.toISOString().slice(0, 10) + ' 00:00:00';
+const endOfDayTimestamp = today.toISOString().slice(0, 10) + ' 23:59:59';
+
 
 async function sendChat(req, res) {
-
   const { text } = req.body;
   const { userId } = req;
+
+  // Use the dbUtils for database connection
+  const dbUtils = new DBUtils();
+
+  // Check if the user has reached the daily limit
+  const checkLimitQuery = `SELECT COUNT(*) AS translation_count FROM corrections WHERE user_id = $1 AND created_at >= $2::timestamp AND created_at <= $3::timestamp; `;
+  const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
+
+  const result = await dbUtils.run(checkLimitQuery, checkLimitValues);
+  const translationCount = result.rows[0].translation_count;
+
+  if (translationCount >= DAILY_TRANSACTION_LIMIT) {
+    return res.status(400).json({ error: 'You have exhausted your daily limit of 10 free translations' });
+  }
 
   const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
 
   // Remove quotes if present in the rephrasedTextWithQuotes
   const rephrasedText = rephrasedTextWithQuotes.replace(/^["']/, "").replace(/["']$/, "");
-
-
-  // Use the dbUtils for database connection
-  const dbUtils = new DBUtils();
 
   // Insert the entry into the corrections table
   const insertQuery = 'INSERT INTO corrections (user_id, original_text, rephrased_text, created_at) VALUES ($1, $2, $3, NOW())';
