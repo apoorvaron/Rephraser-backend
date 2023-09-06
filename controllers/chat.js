@@ -4,6 +4,7 @@ const env = require("dotenv");
 env.config();
 const moment = require('moment');
 const openaiUtils= require('../utils/openaiUtils.js');
+const {countTransactionsQuery}= require('../utils/chatUtils.js');
 
 const DAILY_TRANSACTION_LIMIT = 10; 
 
@@ -21,14 +22,14 @@ async function sendChat(req, res) {
   const dbUtils = new DBUtils();
 
   // Check if the user has reached the daily limit
-  const checkLimitQuery = `SELECT COUNT(*) AS translation_count FROM corrections WHERE user_id = $1 AND created_at >= $2::timestamp AND created_at <= $3::timestamp; `;
+  const checkLimitQuery = countTransactionsQuery();
   const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
 
   const result = await dbUtils.run(checkLimitQuery, checkLimitValues);
   const translationCount = result.rows[0].translation_count;
 
   if (translationCount >= DAILY_TRANSACTION_LIMIT) {
-    return res.status(400).json({Transactions:translationCount, error: `You have exhausted your daily limit of ${DAILY_TRANSACTION_LIMIT} free translations` });
+    return res.status(400).json({Transactions:translationCount, message: `You have exhausted your daily limit of ${DAILY_TRANSACTION_LIMIT} free translations` });
   }
 
   const rephrasedTextWithQuotes = await openaiUtils.getRephrasedText(text);
@@ -87,7 +88,7 @@ async function chatHistory(req, res) {
   }
 
   // Count Corrections per user
-  const checkLimitQuery = `SELECT COUNT(*) AS translation_count FROM corrections WHERE user_id = $1 AND created_at >= $2::timestamp AND created_at <= $3::timestamp; `;
+  const checkLimitQuery = countTransactionsQuery();
   const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
 
   const countCorrections = await dbUtils.run(checkLimitQuery, checkLimitValues);
