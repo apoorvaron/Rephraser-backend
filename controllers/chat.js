@@ -61,11 +61,11 @@ async function chatHistory(req, res) {
   const values = [userId];
 
 
-      // Retrieve chat history based on the user ID
+  // Retrieve chat history based on the user ID
   const result = await dbUtils.run(query, values);
   const chatHistory = result.rows;
 
-          // Transform chat history into desired response format
+  // Transform chat history into desired response format
   const transformedChatHistory = [];
 
   for (const entry of chatHistory) {
@@ -86,8 +86,14 @@ async function chatHistory(req, res) {
 
   }
 
-  res.status(200).json(transformedChatHistory);
+  // Count Corrections per user
+  const checkLimitQuery = `SELECT COUNT(*) AS translation_count FROM corrections WHERE user_id = $1 AND created_at >= $2::timestamp AND created_at <= $3::timestamp; `;
+  const checkLimitValues = [userId, startOfDayTimestamp, endOfDayTimestamp];
 
+  const countCorrections = await dbUtils.run(checkLimitQuery, checkLimitValues);
+  const translationCount = countCorrections.rows[0].translation_count
+
+  res.status(200).json({Transactions:translationCount,History:transformedChatHistory});
 
 }
 
