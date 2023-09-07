@@ -17,7 +17,7 @@ RUN npm install bcryptjs
 COPY . .
 
 # Expose the port your application will run on
-EXPOSE 5003
+EXPOSE 6000
 
 # Start the application
 CMD ["npm", "start"]
