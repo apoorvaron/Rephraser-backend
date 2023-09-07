@@ -54,6 +54,7 @@ describe('sendChat API', () => {
 
         // Assert that the API responded with a status of 200
         expect(response.status).to.equal(200);
+        expect(response.body.Transactions).to.be.a('string');
         expect(getRephrasedTextStub.calledOnce).to.be.true;
 
         // Assert that the database was interacted with as expected
