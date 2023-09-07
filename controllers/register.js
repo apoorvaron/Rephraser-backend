@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwtUtils');
 const DBUtils = require('../utils/dbUtils.js');
+const { generateHashPassword } = require('../utils/hashPasswordUtils.js');
 const env = require("dotenv");
 env.config();
 
@@ -37,7 +37,8 @@ async function register(req, res) {
   }
 
   // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword =   await generateHashPassword(password);
+
 
   // Insert new user into the database
   const insertionResult = await dbUtils.run(
