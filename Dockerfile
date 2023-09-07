@@ -11,8 +11,6 @@ RUN npm cache clean -f
 RUN npm prune
 RUN npm install
 
-RUN npm uninstall bcrypt
-RUN npm install bcryptjs
 # Copy the rest of the application code to the container
 COPY . .
 
