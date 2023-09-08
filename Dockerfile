@@ -1,5 +1,6 @@
 # Use an official Node.js runtime as the base image
 FROM node:16.20.2-bullseye-slim
+
 # Set the working directory in the container
 WORKDIR /app
 
