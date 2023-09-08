@@ -45,11 +45,19 @@ describe('Chat History API', async () => {
       .set('Authorization', generateToken(userId)) 
       .expect(200);
   
-    expect(res.body).to.be.an('array');
-    expect(res.body.length).to.be.greaterThan(0);
+    expect(res.body).to.be.an('object');
+    expect(res.body).to.have.property('Transactions'); 
+    expect(res.body).to.have.property('History'); 
+    
+    // Check the Transactions property
+    expect(res.body.Transactions).to.be.a('string');
+
+    // Check the History property
+    expect(res.body.History).to.be.an('array');
+    expect(res.body.History.length).to.be.greaterThan(0);
 
     // Check if only chats for the specific user are displayed
-    for (const message of res.body) {
+    for (const message of res.body.History) {
       expect(message.sender).to.be.oneOf(['user', 'bot']);
       expect(message).to.have.property('text');
       expect(message).to.have.property('time');
