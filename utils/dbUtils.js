@@ -3,7 +3,7 @@ const env = require("dotenv");
 env.config();
 
 const DB_NAME = process.env.NODE_ENV === "test" ? process.env.POSTGRES_TEST_DB : process.env.POSTGRES_DB;
-console.log(DB_NAME);
+
 class DBUtils {
 
     async connect() {
