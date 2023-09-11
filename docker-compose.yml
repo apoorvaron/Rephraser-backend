@@ -2,6 +2,10 @@ version: '3'
 services:
   postgres:
     image: postgres:13
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -15,16 +19,14 @@ services:
     depends_on:
       - postgres
     environment:
-      DB_URL: ${DB_URL}
       JWT_SECRET: ${JWT_SECRET}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-      TEST_DB_URL: ${TEST_DB_URL}
       NODE_ENV: ${NODE_ENV}
     command:
       [
         "sh",
         "-c",
-        "sleep 10 &&  npm run migrate && npm start"
+        "sleep 10 &&  npm run migrate && npm run test"
       ]
 
 volumes:
