@@ -3,7 +3,7 @@ const env = require("dotenv");
 env.config();
 
 const DB_NAME = process.env.NODE_ENV === "test" ? process.env.POSTGRES_TEST_DB : process.env.POSTGRES_DB;
-console.log(DB_NAME);
+
 class DBUtils {
 
     async connect() {
@@ -22,7 +22,7 @@ class DBUtils {
         host: process.env.POSTGRES_HOST,
         database: DB_NAME
       });
-      console.log(this.client);
+      
       await this.connect();
       const result = await this.client.query(query, values);
       return result;
