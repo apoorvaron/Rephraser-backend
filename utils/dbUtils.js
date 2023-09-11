@@ -2,8 +2,8 @@ const { Client } = require("pg");
 const env = require("dotenv");
 env.config();
 
-const connectionString = process.env.NODE_ENV === "test" ? process.env.TEST_DB_URL : process.env.DB_URL;
-
+const DB_NAME = process.env.NODE_ENV === "test" ? process.env.POSTGRES_TEST_DB : process.env.POSTGRES_DB;
+console.log(DB_NAME);
 class DBUtils {
 
     async connect() {
@@ -16,7 +16,13 @@ class DBUtils {
 
   async run(query, values) {
     try {
-      this.client = new Client({connectionString});
+      this.client = new Client({
+        user: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        host: process.env.POSTGRES_HOST,
+        database: DB_NAME
+      });
+      console.log(this.client);
       await this.connect();
       const result = await this.client.query(query, values);
       return result;
