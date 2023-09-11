@@ -82,12 +82,18 @@ To add your own `.env` file for sensitive data, follow these steps:
 2. Inside the `.env` file, define your environment variables like this:
 
 
-       DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourDatabaseName'
-       TEST_DB_URL='postgres://YourUserName:YourPassword@YourHostname:5432/YourTESTDatabaseName'
        JWT_SECRET='secretKey'
        OPENAI_API_KEY = '<Your_OPEN_API_KEY>'
        ROLLBAR_TOKEN = '<Your_ROLLBAR_TOKEN>'
        GOOGLE_CLIENT_ID = '<Your_GOOGLE_CLIENT_ID>'
+       PORT='6000'
+       NODE_ENV='test'
+       POSTGRES_USER =  ''
+       POSTGRES_PASSWORD = ''
+       POSTGRES_HOST = 'localhost'
+       POSTGRES_DB = 'postgres'
+       POSTGRES_TEST_DB = 'testDB'
+       POSTGRES_PORT = '5432'
 
 
 
