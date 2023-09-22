@@ -6,7 +6,7 @@ const moment = require('moment');
 const openaiUtils= require('../utils/openaiUtils.js');
 const {getCorrectsCountForToday}= require('../utils/chatUtils.js');
 
-const DAILY_TRANSACTION_LIMIT = 10; 
+const DAILY_TRANSACTION_LIMIT = 1000; 
 
 async function sendChat(req, res) {
   const { text } = req.body;
