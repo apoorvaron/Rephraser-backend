@@ -1,33 +1,36 @@
 version: '3'
 services:
+  # PostgreSQL Database Service
   postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    image: postgres
+    container_name: backend-postgres
     ports:
-      - "5432:5432"
+      - "5432:5432" # Expose PostgreSQL port
+    networks:
+      - app-network
     volumes:
       - postgres-data:/var/lib/postgresql/data
-
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+  # Express App Service
   app:
     build:
       context: .
+      dockerfile: Dockerfile
+    container_name: backend-app
     ports:
-      - "6000:6000" # Map container's port 6000 to host's port 6000
+      - "4000:4000" # Expose your app's port
+    networks:
+      - app-network
     depends_on:
-      - postgres
+      - postgres # Ensure the app starts after PostgreSQL
     environment:
-      JWT_SECRET: ${JWT_SECRET}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      NODE_ENV: ${NODE_ENV}
-    command:
-      [
-        "sh",
-        "-c",
-        "sleep 10 &&  npm run migrate && npm run test"
-      ]
+      DB_URL: ${DB_URL}
+      NODE_ENV: dev
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres-data:
