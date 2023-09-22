@@ -15,7 +15,7 @@ services:
     build:
       context: .
     ports:
-      - "6000:6000" # Map container's port 6000 to host's port 6000
+      - "4000:4000" # Map container's port 4000 to host's port 4000
     depends_on:
       - postgres
     environment:
@@ -26,7 +26,7 @@ services:
       [
         "sh",
         "-c",
-        "sleep 10 &&  npm run migrate && npm run test"
+        "sleep 10 &&  npm run migrate && npm start"
       ]
 
 volumes:
