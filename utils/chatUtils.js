@@ -1,3 +1,4 @@
+const res = require('express/lib/response.js');
 const DBUtils = require('../utils/dbUtils.js');
 
 async function getCorrectsCountForToday(userId) {
